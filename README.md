@@ -1,8 +1,8 @@
 # NewDataTasks
 
 1-Routing:
-This Routing codes you can use Spyder ar any IDEs to run my code. this code is reading routing api utilizing OSRM-Backend that hasbeen impelemented in "http://62.106.95.167:5000/route/v1/driving/" address to route.
-You can see an example of routin in tehran in bellow picture
+To use this Routing code you can use Spyder or any IDEs to run my code. This code is reading routing api utilizing OSRM-Backend that has been impelemented in our server by the address of "http://62.106.95.167:5000/route/v1/driving/" to route.
+You can see an example of routing in tehran in bellow picture
 ![alt text](https://github.com/Rjalalifar/NewDataTasks/blob/main/Images/RoutingResult.png)
 
 codes are comented and you can understand each step by comments.
