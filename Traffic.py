@@ -228,10 +228,12 @@ def create_and_train_lstm_gcn_model(input_shape, train_dataset, val_dataset, epo
     )
     model.fit(
         train_dataset,
-        validation_data=val_dataset,
+        # Replace val_target with your actual validation target data
+        validation_data=(val_dataset, val_target),
         epochs=epochs,
-        callbacks=[keras.callbacks.EarlyStopping(patience=10)],
+        callbacks=[keras.callbacks.EarlyStopping(patience=10)]
     )
+
     return model
 
 # Step 12: Evaluate the Model
