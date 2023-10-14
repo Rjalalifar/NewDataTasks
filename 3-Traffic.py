@@ -26,12 +26,6 @@ fig, ax = ox.plot_graph(graph)
 
 edges = ox.graph_to_gdfs(graph, nodes=False, edges=True)
 
-
-highway = edges['highway']
-
-
-print("Coordinate system:", edges.crs)
-
 nodes_proj, edges_proj = ox.graph_to_gdfs(graph, nodes=True, edges=True)
 
 
@@ -54,10 +48,6 @@ route_distances = pd.read_csv(
 speeds_array = pd.read_csv(os.path.join(
     data_dir, "PeMSD7_V_228.csv"), header=None).to_numpy()
 
-# Print data shapes
-print(f"Route distances shape: {route_distances.shape}")
-print(f"Speeds array shape: {speeds_array.shape}")
-
 # Define sample routes
 sample_routes = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 df = pd.DataFrame({'Sample_Routes': sample_routes, 'OSMID': osmid})
@@ -66,10 +56,6 @@ df = pd.DataFrame({'Sample_Routes': sample_routes, 'OSMID': osmid})
 # Select sample routes from data
 route_distances = route_distances[np.ix_(sample_routes, sample_routes)]
 speeds_array = speeds_array[:, sample_routes]
-
-# Print updated data shapes
-print(f"Updated route distances shape: {route_distances.shape}")
-print(f"Updated speeds array shape: {speeds_array.shape}")
 
 # Visualize data
 plt.figure(figsize=(18, 6))
@@ -103,11 +89,6 @@ def preprocess_data(data_array: np.ndarray, train_size: float, val_size: float):
 # Preprocess the speeds data
 train_array, val_array, test_array = preprocess_data(
     speeds_array, train_size, val_size)
-
-# Print dataset sizes
-print(f"Train set size: {train_array.shape}")
-print(f"Validation set size: {val_array.shape}")
-print(f"Test set size: {test_array.shape}")
 
 # Create TensorFlow datasets
 
@@ -188,8 +169,6 @@ graph = GraphInfo(
     edges=(node_indices.tolist(), neighbor_indices.tolist()),
     num_nodes=adjacency_matrix.shape[0],
 )
-print(
-    f"Number of nodes: {graph.num_nodes}, Number of edges: {len(graph.edges[0])}")
 
 # Define a custom GraphConvolution layer
 
