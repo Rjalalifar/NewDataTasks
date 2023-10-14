@@ -53,7 +53,11 @@ selected_speeds_array = speeds_array[:, sample_route_indices]
 # Visualize selected data
 plt.figure(figsize=(18, 6))
 plt.plot(selected_speeds_array[:, [0, -1]])
-plt.legend(["Route 0", "Route 25"])
+route_names = edges_df['name'].values
+
+# Set the legend using route names
+legend_labels = [f"{route_names[i]}" for i in sample_routes]
+plt.legend(legend_labels)
 
 # Data preprocessing parameters
 train_size, val_size = 0.5, 0.2

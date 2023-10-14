@@ -17,4 +17,5 @@ codes are commented and u can understand each step from comments.
 
 3-Trraffic Forecasting: This code is to modeling and predicting traffic. It predicts speed of drivindg in different roads. the original model than i costomized to my project is created by Yu, Bing, Haoteng Yin, and Zhanxing Zhu. . you can find it in :https://github.com/VeritasYin/STGCN_IJCAI-18
 Firstly data is downloading from osm by osmnx framework and then model runs. you can use google colab of any IDEs such as Spyder to run it.
+![alt text](https://github.com/Rjalalifar/NewDataTasks/blob/main/Images/TrafficData.png)
 ![alt text](https://github.com/Rjalalifar/NewDataTasks/blob/main/Images/TrafficResult.png)
