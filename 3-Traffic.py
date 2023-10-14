@@ -50,9 +50,6 @@ selected_route_distances = route_distances[np.ix_(
     sample_route_indices, sample_route_indices)]
 selected_speeds_array = speeds_array[:, sample_route_indices]
 
-print(f"Selected route distances shape: {selected_route_distances.shape}")
-print(f"Selected speeds array shape: {selected_speeds_array.shape}")
-
 # Visualize selected data
 plt.figure(figsize=(18, 6))
 plt.plot(selected_speeds_array[:, [0, -1]])
@@ -79,10 +76,6 @@ def preprocess_traffic_data(data_array: np.ndarray, train_size: float, val_size:
 # Preprocess the traffic data
 train_data, val_data, test_data = preprocess_traffic_data(
     selected_speeds_array, train_size, val_size)
-
-print(f"Train data size: {train_data.shape}")
-print(f"Validation data size: {val_data.shape}")
-print(f"Test data size: {test_data.shape}")
 
 # Create TensorFlow datasets
 batch_size = 64
@@ -161,9 +154,6 @@ graph_info = TrafficGraphInfo(
     edges=(node_indices.tolist(), neighbor_indices.tolist()),
     num_nodes=traffic_adjacency_matrix.shape[0],
 )
-print(
-    f"Number of nodes: {graph_info.num_nodes}, Number of edges: {len(graph_info.edges[0])}")
-
 # Define a custom GraphConvolution layer
 
 
@@ -345,23 +335,9 @@ naive_mse, model_mse = (
 )
 print(f"Naive MSE: {naive_mse}, Model MSE: {model_mse}")
 
-# Create an array to store predicted time series
-predicted_time_series = []
 
-# Iterate over each time series in x_test
-for i in range(x_test.shape[2]):
-    # Extract a single time series from x_test
-    single_time_series = x_test[:, :, i:i+1]
-
-    # Check if the sequence is long enough to make predictions
-    if single_time_series.shape[1] >= input_sequence_length + forecast_horizon:
-        # Predict using the model
-        y_pred_single = model.predict(single_time_series)
-        # Append the predicted time series to the array
-        predicted_time_series.append(y_pred_single)
-
-# Convert the list of predicted time series to a NumPy array
-predicted_time_series = np.array(predicted_time_series)
+# Predict all time series in x_test
+y_pred = model.predict(x_test)
 
 # Number of time series and their lengths
 num_time_series = x_test.shape[2]
@@ -369,11 +345,11 @@ time_series_length = x_test.shape[1]
 
 # Create a plot to display all time series
 plt.figure(figsize=(12, 6))
-for i in range(len(predicted_time_series)):
+for i in range(num_time_series):
     plt.plot(range(time_series_length),
              x_test[0, :, i], label=f'Test Series {i} (Actual)')
     plt.plot(range(time_series_length, time_series_length + forecast_horizon),
-             predicted_time_series[i][0, :, 0], label=f'Test Series {i} (Predicted)')
+             y_pred[0, :, i], label=f'Test Series {i} (Predicted)')
 
 plt.xlabel('Time Steps')
 plt.ylabel('Value')
