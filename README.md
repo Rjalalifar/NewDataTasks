@@ -19,3 +19,5 @@ codes are commented and u can understand each step from comments.
 Firstly data is downloading from osm by osmnx framework and then model runs. you can use google colab of any IDEs such as Spyder to run it.
 ![alt text](https://github.com/Rjalalifar/NewDataTasks/blob/main/Images/TrafficData.png)
 ![alt text](https://github.com/Rjalalifar/NewDataTasks/blob/main/Images/TrafficResult.png)
+4-BasketAnalysis: this code is created for basket analysis. code in commented and at the end of the code you can see top tem rules sotting by lift in the plot.
+![alt text](https://github.com/Rjalalifar/NewDataTasks/blob/main/Images/BasketAnalysis.png)
