@@ -17,26 +17,23 @@ road_network = ox.graph_from_bbox(
     35.7209, 35.7042, 51.4215, 51.3856, network_type='drive')
 ox.plot_graph(road_network)  # Visualize the road network
 
-# Extract edge information from the graph
+# Extract edge
 edges_df = ox.graph_to_gdfs(road_network, nodes=False, edges=True)
 highways = edges_df['highway']
 print("Coordinate system:", edges_df.crs)
 
 nodes_df, edges_df = ox.graph_to_gdfs(road_network, nodes=True, edges=True)
 
-# Compute basic statistics of the road network
 network_stats = ox.basic_stats(road_network)
 
-# Create a convex hull of the road network
 edges_df.unary_union.convex_hull
 
-# Download and extract traffic dataset
+# Download and extract traffic dataset from git hub of Mr Yu
 traffic_data_url = "https://github.com/VeritasYin/STGCN_IJCAI-18/raw/master/dataset/PeMSD7_Full.zip"
 data_dir = tf.keras.utils.get_file(
     origin=traffic_data_url, extract=True, archive_format="zip")
 data_dir = data_dir.rstrip("PeMSD7_Full.zip")
 
-# Load traffic data
 route_distances = pd.read_csv(os.path.join(
     data_dir, "PeMSD7_W_228.csv"), header=None).to_numpy()
 speeds_array = pd.read_csv(os.path.join(
@@ -44,13 +41,12 @@ speeds_array = pd.read_csv(os.path.join(
 
 edges_df['edge_index'] = np.arange(len(edges_df))
 
-# Define sample routes and select them
+# Define sample routes
 sample_route_indices = edges_df['edge_index'].tolist()[:8]
 selected_route_distances = route_distances[np.ix_(
     sample_route_indices, sample_route_indices)]
 selected_speeds_array = speeds_array[:, sample_route_indices]
 
-# Visualize selected data
 plt.figure(figsize=(18, 6))
 plt.plot(selected_speeds_array[:, [0, -1]])
 route_names = edges_df['name'].values
@@ -59,10 +55,8 @@ route_names = edges_df['name'].values
 legend_labels = [f"{route_names[i]}" for i in sample_routes]
 plt.legend(legend_labels)
 
-# Data preprocessing parameters
+# Data preprocessing
 train_size, val_size = 0.5, 0.2
-
-# Data preprocessing function
 
 
 def preprocess_traffic_data(data_array: np.ndarray, train_size: float, val_size: float):
@@ -77,7 +71,6 @@ def preprocess_traffic_data(data_array: np.ndarray, train_size: float, val_size:
     return train_data, val_data, test_data
 
 
-# Preprocess the traffic data
 train_data, val_data, test_data = preprocess_traffic_data(
     selected_speeds_array, train_size, val_size)
 
@@ -254,10 +247,10 @@ class TrafficGraphLSTM(layers.Layer):
 
     def call(self, inputs):
         inputs = tf.transpose(inputs, [
-                              2, 0, 1, 3])  # Convert shape to (num_nodes, batch_size, input_seq_len, in_features)
+                              2, 0, 1, 3])
         gcn_out = self.graph_conv(
             inputs
-        )  # gcn_out has shape: (num_nodes, batch_size, input_seq_len, out_features)
+        )
         shape = tf.shape(gcn_out)
         num_nodes, batch_size, input_seq_len, out_features = (
             shape[0],
@@ -269,15 +262,15 @@ class TrafficGraphLSTM(layers.Layer):
             gcn_out, (batch_size * num_nodes, input_seq_len, out_features))
         lstm_out = self.lstm(
             gcn_out
-        )  # lstm_out has shape: (batch_size * num_nodes, lstm_units)
+        )
         dense_output = self.dense(
             lstm_out
-        )  # dense_output has shape: (batch_size * num_nodes, output_seq_len)
+        )
         output = tf.reshape(
             dense_output, (num_nodes, batch_size, self.output_seq_len))
         return tf.transpose(
             output, [1, 2, 0]
-        )  # returns Tensor of shape (batch_size, output_seq_len, num_nodes)
+        )
 
 
 # Model parameters
@@ -295,7 +288,7 @@ graph_conv_params = {
     "activation": None,
 }
 
-# Create the Traffic LSTM-GCN model
+# Create Traffic LSTM-GCN model
 traffic_lstm_gcn = TrafficGraphLSTM(
     in_features,
     out_features,
@@ -310,7 +303,6 @@ inputs = layers.Input(
 outputs = traffic_lstm_gcn(inputs)
 model = keras.models.Model(inputs, outputs)
 
-# Compile and train the model
 model.compile(
     optimizer=keras.optimizers.RMSprop(learning_rate=0.0002),
     loss=keras.losses.MeanSquaredError(),
@@ -322,11 +314,10 @@ model.fit(
     callbacks=[keras.callbacks.EarlyStopping(patience=10)],
 )
 
-# Evaluate the model on the test dataset
+# Evaluate the model
 x_test, y = next(test_dataset.as_numpy_iterator())
 y_pred = model.predict(x_test)
 
-# Visualize the results
 plt.figure(figsize=(18, 6))
 plt.plot(y[:, 0, 0])
 plt.plot(y_pred[:, 0, 0])
@@ -339,15 +330,11 @@ naive_mse, model_mse = (
 )
 print(f"Naive MSE: {naive_mse}, Model MSE: {model_mse}")
 
-
-# Predict all time series in x_test
 y_pred = model.predict(x_test)
 
-# Number of time series and their lengths
 num_time_series = x_test.shape[2]
 time_series_length = x_test.shape[1]
 
-# Create a plot to display all time series
 plt.figure(figsize=(12, 6))
 for i in range(num_time_series):
     plt.plot(range(time_series_length),
