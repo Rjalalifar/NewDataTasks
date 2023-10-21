@@ -95,7 +95,7 @@
                     var route = data.routes[0].geometry.coordinates;
                     addRoute(route);
 
-                    // Zoom the map to fit the entire route
+
                     var extent = ol.extent.boundingExtent(route);
                     map.getView().fit(extent, { padding: [50, 50, 50, 50] });
                 });
