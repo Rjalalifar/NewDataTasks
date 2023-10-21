@@ -11,7 +11,7 @@
     <button id="calculateRouteBtn">Calculate Route</button>
 
     <script>
-        // Define your map
+
         var map = new ol.Map({
             target: 'map',
             layers: [
@@ -26,7 +26,7 @@
             })
         });
 
-        // Define your source and vector layer for the route
+
         var vectorSource = new ol.source.Vector();
         var vectorLayer = new ol.layer.Vector({
             source: vectorSource,
@@ -74,7 +74,7 @@
             }
         });
 
-        // Define a function to add a route to the map
+
         function addRoute(coordinates) {
             vectorSource.clear();
             var route = new ol.Feature({
@@ -83,7 +83,7 @@
             vectorSource.addFeature(route);
         }
 
-        // Define a function to calculate and display a route using OSRM
+
         function calculateRoute(start, end) {
             var url = 'http://62.106.95.167:5000/route/v1/driving/' + start[0] + ',' + start[1] + ';' + end[0] + ',' + end[1] + '?geometries=geojson';
 
